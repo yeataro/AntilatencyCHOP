@@ -1,0 +1,3 @@
+﻿  AntilatencyCHOP.cpp
+     正在建立程式庫 D:\Dropbox\yea\git\Chill\TD-AntilatencyCHOP\AntilatencyCHOP\Debug\CPlusPlusCHOPExample.lib 和物件 D:\Dropbox\yea\git\Chill\TD-AntilatencyCHOP\AntilatencyCHOP\Debug\CPlusPlusCHOPExample.exp
+d:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppCommon.targets(720,5): error MSB6003: 無法執行指定的工作可執行檔 "link.exe"。由於另一個處理序正在使用檔案 'Debug\CPlusPlu.3F5BEECD.tlog\link-rc.write.1.tlog'，所以無法存取該檔案。

@@ -1,3 +1,26 @@
+#===TouchDesigner===
+
+#backup
+Backup/
+
+#Crash
+*.dmp
+CrashAutoSave.*
+
+#===TEST===
+
+#test
+Test/
+WIP/
+release/
+
+
+#===VS====
+.vs/
+
+
+#===CPP===
+
 # Prerequisites
 *.d
 
@@ -14,7 +37,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+#*.dll
 
 # Fortran module files
 *.mod
