@@ -224,7 +224,7 @@ AntilatencyCHOP::updateDevice( )
 			//Found tracking node
 			auto nodeSerialNo = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), Antilatency::DeviceNetwork::Interop::Constants::HardwareSerialNumberKey);
 			auto nodeTag = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), "Tag");
-			//std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
+			std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
 			std::cout << "Tag: " << nodeTag << std::endl;
 			//char Msg[80] = "Tracking node found, serial number: ";
 			//strcat(Msg, nodeSerialNo.c_str());
