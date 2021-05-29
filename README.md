@@ -15,7 +15,7 @@ Early test version, not suitable for production environment. Anyone who is inter
 
 
 ## Known issues
-- There are more than two operators at the same time will crash.
+- There are more than two operators at the same time will crash. (Even in different processes)
 - Some specific environment code will cause a crash (it is guessed that it can be decoded by bese64 but the content is incorrect).
 
 ## Disclaimer
