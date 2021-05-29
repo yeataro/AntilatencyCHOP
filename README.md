@@ -9,6 +9,7 @@ Early test version, not suitable for production environment. Anyone who is inter
 ## To-do
 - [ ] Support more than one ALT. 
 - [ ] Multi-threaded sampling at high speed.
+- [ ] Export the mark points of the environment configuration to info DAT.
 
 
 ## Known issues
