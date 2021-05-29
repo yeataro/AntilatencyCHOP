@@ -230,21 +230,27 @@ AntilatencyCHOP::updateDevice( )
 		updateId = newUpdateId;
 
 		//std::cout << "Factory update id has been incremented, searching for available tracking node..." << std::endl;
-		myError = "Factory update id has been incremented, searching for available tracking node...";
+		//myPopup = "Factory update id has been incremented, searching for available tracking node...";
 		GetTrackingNode();
 		//trackingNode = GetTrackingNode();
 		if (trackingNode != Antilatency::DeviceNetwork::NodeHandle::Null) {
 			//Found tracking node
 			auto nodeSerialNo = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), Antilatency::DeviceNetwork::Interop::Constants::HardwareSerialNumberKey);
 			//std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
+			//char Msg[80] = "Tracking node found, serial number: ";
+			//strcat(Msg, nodeSerialNo.c_str());
+			//myPopup = Msg;
+			
 			//tbd:output to info
 			RunTrackingTask();
 			myError = "";
+			myWarning = "";
+			myPopup = "";
 			//return;
 		}
 		else {
 			//std::cout << "Tracking node not found." << std::endl;
-			myError = "Tracking node not found, searching for available tracking node...";
+			myWarning = "Tracking node not found, searching for available tracking node...";
 			//return;
 
 		}
@@ -461,6 +467,19 @@ AntilatencyCHOP::getErrorString(OP_String *error, void* reserved1)
 	error->setString(myError);
 }
 
+void
+AntilatencyCHOP::getInfoPopupString(OP_String *popup, void* reserved1)
+{
+	popup->setString(myPopup);
+}
+
+void
+AntilatencyCHOP::getWarningString(OP_String *warning, void *reserved1)
+{
+	warning->setString(myWarning);
+}
+
+
 
 
 
@@ -481,6 +500,7 @@ AntilatencyCHOP::setupParameters(OP_ParameterManager* manager, void *reserved1)
 		assert(res == OP_ParAppendResult::Success);
 	}
 
+	//Time Slice
 	{
 		OP_NumericParameter	tp;
 
@@ -524,36 +544,11 @@ AntilatencyCHOP::pulsePressed(const char* name, const OP_Inputs* inputs, void* r
 {
 	if (!strcmp(name, "Initialize"))
 	{
-		myOffset = 0.0;
+		myExecuteCount = 0;
 
 		setupDevice(inputs);
-
-	   /*
-		auto newUpdateId = deviceNetwork.getUpdateId();
-		if (updateId != newUpdateId) {
-			updateId = newUpdateId;
-
-			std::cout << "Factory update id has been incremented, searching for available tracking node..." << std::endl;
-
-			trackingNode = GetTrackingNode();
-			if (trackingNode != Antilatency::DeviceNetwork::NodeHandle::Null) {
-				//Found tracking node
-				auto nodeSerialNo = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), Antilatency::DeviceNetwork::Interop::Constants::HardwareSerialNumberKey);
-				std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
-				ANTIexec = false;
-				//return;
-			}
-			else {
-				std::cout << "Tracking node not found." << std::endl;
-				ANTIexec = false;
-
-				//return;
-
-			}
-		}*/
-
-
 	}
+	myExecuteCount = 100;
 }
 
 

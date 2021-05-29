@@ -67,6 +67,8 @@ public:
 											void* reserved1) override;
 	//
 	virtual void		getErrorString(OP_String *error, void* reserved1) override;
+	virtual void		getInfoPopupString(OP_String *popup, void* reserved1) override;
+	virtual void		getWarningString(OP_String *warning, void *reserved1);
 	//
 	virtual void		setupParameters(OP_ParameterManager* manager, void *reserved1) override;
 	virtual void		pulsePressed(const char* name, const OP_Inputs*, void* reserved1);
@@ -99,6 +101,8 @@ private:
 	//int32_t				DeviceConnect
 
 	const char*			myError;
+	const char*			myPopup;
+	const char*			myWarning;
 
 	//std::string			 ADNversion;
 
