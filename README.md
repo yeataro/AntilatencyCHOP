@@ -16,6 +16,7 @@ Early test version, not suitable for production environment. Anyone who is inter
 - Paramaters:
     - [ ] Add "Tag" to the channel name. (Toggle)
     - [ ] Add "Serial number" to the channel name. (Toggle)
+    - [ ] Add "Device name" to the channel name. (Toggle)
     - [ ] Output RAW pose. (Toggle)
     - [ ] Max ALTs. (Int)
 
