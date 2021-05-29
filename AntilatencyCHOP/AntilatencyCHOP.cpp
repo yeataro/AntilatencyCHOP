@@ -275,7 +275,8 @@ AntilatencyCHOP::updateEnv()
 	auto markers = environment.getMarkers();
 	//std::cout << "Environment markers count: " << markers.size() << std::endl;
 	//tbd:output to info
-
+	MarkersSize = markers.size();
+	//Markers = markers;
 	for (auto i = 0; i < markers.size(); ++i) {
 		std::cout << "Marker " << i << ": {" << markers[i].x << ", " << markers[i].y << ", " << markers[i].z << "}" << std::endl;
 		//tbd:output to info
@@ -442,8 +443,8 @@ AntilatencyCHOP::getInfoCHOPChan(int32_t index,
 bool		
 AntilatencyCHOP::getInfoDATSize(OP_InfoDATSize* infoSize, void* reserved1)
 {
-	infoSize->rows = 2;
-	infoSize->cols = 2;
+	infoSize->rows = 3;
+	infoSize->cols = MarkersSize+1;
 	// Setting this to false means we'll be assigning values to the table
 	// one row at a time. True means we'll do it one column at a time.
 	infoSize->byColumn = false;
@@ -458,6 +459,56 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 {
 	char tempBuffer[4096];
 
+	auto markers = environment.getMarkers();
+	MarkersSize = markers.size();
+
+	if (index == 0){
+		entries->values[0]->setString("mark:tx");
+
+		for (auto i = 0; i < markers.size(); ++i) {
+			#ifdef _WIN32
+			sprintf_s(tempBuffer, "%f\t", markers[i].x);
+			#else // macOS
+			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", myExecuteCount);
+			#endif
+			int j = i + 1;
+			entries->values[j]->setString(tempBuffer);
+		}
+		
+		
+	}
+
+	if (index == 1) {
+		entries->values[0]->setString("mark:ty");
+
+		for (auto i = 0; i < markers.size(); ++i) {
+#ifdef _WIN32
+			sprintf_s(tempBuffer, "%f\t", markers[i].y);
+#else // macOS
+			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", myExecuteCount);
+#endif
+			int j = i + 1;
+			entries->values[j]->setString(tempBuffer);
+		}
+	}
+
+	if (index == 2) {
+		entries->values[0]->setString("mark:tz");
+
+		for (auto i = 0; i < markers.size(); ++i) {
+#ifdef _WIN32
+			sprintf_s(tempBuffer, "%f\t", markers[i].z);
+#else // macOS
+			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", myExecuteCount);
+#endif
+			int j = i + 1;
+			entries->values[j]->setString(tempBuffer);
+		}
+
+	}
+
+
+	/*
 	if (index == 0)
 	{
 		// Set the value for the first column
@@ -485,6 +536,7 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 #endif
 		entries->values[1]->setString( tempBuffer);
 	}
+	*/
 }
 
 

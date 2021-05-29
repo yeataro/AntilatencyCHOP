@@ -2,6 +2,8 @@
 
 Use [Antilatency](https://antilatency.com/) in [TouchDesigner](https://derivative.ca/).
 
+![](img/sc01.png)
+
 ## Warning
 Early test version, not suitable for production environment. Anyone who is interested in this feature is welcome to improve it.
 
@@ -9,7 +11,7 @@ Early test version, not suitable for production environment. Anyone who is inter
 ## To-do
 - [ ] Support more than one ALT. 
 - [ ] Multi-threaded sampling at high speed.
-- [ ] Export the mark points of the environment configuration to info DAT.
+- [x] Export the mark points of the environment configuration to info DAT.
 
 
 ## Known issues

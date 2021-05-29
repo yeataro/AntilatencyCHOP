@@ -109,6 +109,8 @@ private:
 	//std::string			 ADNversion;
 
 	const char*		 ENVcode;
+	int32_t				MarkersSize;
+	//Antilatency::Math::float3		Markers;
 
 	//Flag
 	uint32_t				updateId = 0;
