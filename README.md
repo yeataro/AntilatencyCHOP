@@ -13,7 +13,11 @@ Early test version, not suitable for production environment. Anyone who is inter
 - [ ] Multi-threaded sampling at high speed.
 - [x] Export the mark points of the environment configuration to info DAT.
     - [ ] keep info DAT for device info, create an py object for the mark points.
-
+- Paramaters:
+    - [ ] Append Tag no chan-name. (Toggle)
+    - [ ] Append Serial number no chan-name. (Toggle)
+    - [ ] Output RAW pose. (Toggle)
+    - [ ] Max ALTs. (Int)
 
 ## Known issues
 - There are more than two operators at the same time will crash. (Even in different processes)
