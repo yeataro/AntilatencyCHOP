@@ -71,12 +71,14 @@ public:
 	virtual void		getWarningString(OP_String *warning, void *reserved1);
 	//
 	virtual void		setupParameters(OP_ParameterManager* manager, void *reserved1) override;
-	virtual void		pulsePressed(const char* name, const OP_Inputs*, void* reserved1);
+	virtual void		pulsePressed(const char* name, void* reserved1);
 	
 	//virtual void		GetTrackingData(Antilatency::DeviceNetwork::NodeHandle* node) override;
-	virtual void		setupDevice(const OP_Inputs* inputs);
+	virtual void		setupDevice();
 
 	virtual void		updateDevice();
+
+	virtual void		updateEnv();
 
 	virtual void		GetTrackingNode();
 
@@ -106,6 +108,8 @@ private:
 
 	//std::string			 ADNversion;
 
+	const char*		 ENVcode;
+
 	//Flag
 	uint32_t				updateId = 0;
 	bool					ANTIexec = false;
@@ -118,4 +122,5 @@ private:
 	Antilatency::DeviceNetwork::NodeHandle trackingNode;
 	Antilatency::Math::float3  Pos;
 	Antilatency::Math::floatQ Rotate;
+	Antilatency::Alt::Tracking::State *RawState;
 };

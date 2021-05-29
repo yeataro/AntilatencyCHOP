@@ -368,7 +368,7 @@ public:
 
 	// This is called whenever a pulse parameter is pressed
 	virtual void
-	pulsePressed(const char* name, void* reserved1)
+	pulsePressed(const char* name,  void* reserved1)
 	{
 	}
 

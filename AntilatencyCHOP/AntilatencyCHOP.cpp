@@ -147,9 +147,6 @@ DestroyCHOPInstance(CHOP_CPlusPlusBase* instance)
 	// Delete the instance here, this will be called when
 	// Touch is shutting down, when the CHOP using that instance is deleted, or
 	// if the CHOP loads a different DLL
-	//StopTrackingTask();
-	//RunTrackingTask(trackingNode);
-	//Yield();
 	delete (AntilatencyCHOP*)instance;
 
 
@@ -159,7 +156,7 @@ DestroyCHOPInstance(CHOP_CPlusPlusBase* instance)
 
 
 void
-AntilatencyCHOP::setupDevice(const OP_Inputs * inputs) 
+AntilatencyCHOP::setupDevice() 
 {
 
 	myError = nullptr;
@@ -203,22 +200,7 @@ AntilatencyCHOP::setupDevice(const OP_Inputs * inputs)
 	deviceNetwork = adnLibrary.createNetwork(std::vector<Antilatency::DeviceNetwork::UsbDeviceType>{antilatencyUsbDeviceType, antilatencyUsbDeviceTypeLegacy});
 
 	//Antilatency::DeviceNetwork::NodeHandle trackingNode;
-
-	auto environmentCode = antilatencyStorageClient.getLocalStorage().read("environment", "default");
-	auto placementCode = antilatencyStorageClient.getLocalStorage().read("placement", "default");
-
-	environment = altTrackingLibrary.createEnvironment(environmentCode);
-	placement = altTrackingLibrary.createPlacement(placementCode);
-
-	auto markers = environment.getMarkers();
-	//std::cout << "Environment markers count: " << markers.size() << std::endl;
-	//tbd:output to info
-
-	for (auto i = 0; i < markers.size(); ++i) {
-		//std::cout << "Marker " << i << ": {" << markers[i].x << ", " << markers[i].y << ", " << markers[i].z << "}" << std::endl;
-		//tbd:output to info
-	}
-
+	updateEnv();
 	ANTIexec = true;
 }
 
@@ -243,9 +225,9 @@ AntilatencyCHOP::updateDevice( )
 			
 			//tbd:output to info
 			RunTrackingTask();
-			myError = "";
-			myWarning = "";
-			myPopup = "";
+			myError = nullptr;
+			myWarning = nullptr;
+			myPopup = nullptr;
 			//return;
 		}
 		else {
@@ -256,6 +238,50 @@ AntilatencyCHOP::updateDevice( )
 		}
 	}
 }
+
+void
+AntilatencyCHOP::updateEnv()
+{
+	auto antilatencyStorageClient = Antilatency::InterfaceContract::getLibraryInterface<Antilatency::StorageClient::ILibrary>("AntilatencyStorageClient");
+	auto environmentCode = antilatencyStorageClient.getLocalStorage().read("environment", "default");
+	auto placementCode = antilatencyStorageClient.getLocalStorage().read("placement", "default");
+	myWarning = nullptr;
+	environment = altTrackingLibrary.createEnvironment(environmentCode);
+	placement = altTrackingLibrary.createPlacement(placementCode);
+	
+	//NOT A GOOD WAY
+	if (strcmp(ENVcode,"AA") > 0){
+
+	try {
+		environment = altTrackingLibrary.createEnvironment(ENVcode);
+		std::cout << environment << std::endl;
+		if (environment == nullptr) {
+			myError = "Could not create environment!";
+			return;
+			//continue;
+		}
+	}
+	catch (const std::exception &ex) 
+	{
+		myWarning = "Can't use this environment code, use the default.";
+		//std::cout << "Can't use that environmentCode, using default." << std::endl;
+	}
+	//std::cout << ENVcode << std::endl;
+
+	}
+	else {
+		myWarning = "The environment code is too short or none, use the default";
+	}
+	auto markers = environment.getMarkers();
+	//std::cout << "Environment markers count: " << markers.size() << std::endl;
+	//tbd:output to info
+
+	for (auto i = 0; i < markers.size(); ++i) {
+		std::cout << "Marker " << i << ": {" << markers[i].x << ", " << markers[i].y << ", " << markers[i].z << "}" << std::endl;
+		//tbd:output to info
+	}
+}
+
 
 
 AntilatencyCHOP::AntilatencyCHOP(const OP_NodeInfo* info) : myNodeInfo(info), myError(nullptr)
@@ -318,6 +344,9 @@ AntilatencyCHOP::getOutputInfo(CHOP_OutputInfo* info, const OP_Inputs* inputs, v
 void
 AntilatencyCHOP::getChannelName(int32_t index, OP_String *name, const OP_Inputs* inputs, void* reserved1)
 {
+	//Change way to input Envcode
+	ENVcode = inputs->getParString("Envcode");
+	//std::cout << ENVcode << std::endl;
 	switch (index) {
 	case 0:
 		name->setString("tx");
@@ -352,7 +381,7 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 	//uint32_t updateId = 0;
 
 	if (!ANTIexec) {
-		setupDevice(inputs);
+		setupDevice();
 	}
 
 		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
@@ -540,15 +569,17 @@ AntilatencyCHOP::setupParameters(OP_ParameterManager* manager, void *reserved1)
 }
 
 void 
-AntilatencyCHOP::pulsePressed(const char* name, const OP_Inputs* inputs, void* reserved1)
+AntilatencyCHOP::pulsePressed(const char* name, void* reserved1)
 {
 	if (!strcmp(name, "Initialize"))
 	{
 		myExecuteCount = 0;
-
-		setupDevice(inputs);
+		trackingCotask = {};
+		updateEnv();
+		RunTrackingTask();
+		//setupDevice();
 	}
-	myExecuteCount = 100;
+	//myExecuteCount = 100;
 }
 
 
