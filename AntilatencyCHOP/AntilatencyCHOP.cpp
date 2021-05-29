@@ -47,6 +47,7 @@ AntilatencyCHOP::GetTrackingNode() {
         for (auto node : nodes) {
             if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
                 result = node;
+				//TBD:get multiple node here
                 break;
             }
         }
@@ -69,6 +70,10 @@ AntilatencyCHOP::RunTrackingTask() {
 	//std::cout << "auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor(); " << std::endl;
 
 	trackingCotask = cotaskConstructor.startTask(deviceNetwork, trackingNode, environment);
+
+	myError = nullptr;
+	myWarning = nullptr;
+	myPopup = nullptr;
 
 	//std::cout << "trackingCotask = cotaskConstructor.startTask(deviceNetwork, node, environment);" << std::endl;
 
@@ -225,9 +230,6 @@ AntilatencyCHOP::updateDevice( )
 			
 			//tbd:output to info
 			RunTrackingTask();
-			myError = nullptr;
-			myWarning = nullptr;
-			myPopup = nullptr;
 			//return;
 		}
 		else {
@@ -459,6 +461,7 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 {
 	char tempBuffer[4096];
 
+	//TBD:dont get here
 	auto markers = environment.getMarkers();
 	MarkersSize = markers.size();
 

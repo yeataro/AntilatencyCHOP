@@ -10,9 +10,9 @@ CrashAutoSave.*
 #===TEST===
 
 #test
-Test/
-WIP/
-release/
+#Test/
+#WIP/
+#release/
 
 
 #===VS====
