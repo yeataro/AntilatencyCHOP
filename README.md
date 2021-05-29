@@ -12,6 +12,7 @@ Early test version, not suitable for production environment. Anyone who is inter
 - [ ] Support more than one ALT. 
 - [ ] Multi-threaded sampling at high speed.
 - [x] Export the mark points of the environment configuration to info DAT.
+    - [ ] keep info DAT for device info, create an py object for the mark points.
 
 
 ## Known issues
