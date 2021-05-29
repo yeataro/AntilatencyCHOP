@@ -223,7 +223,9 @@ AntilatencyCHOP::updateDevice( )
 		if (trackingNode != Antilatency::DeviceNetwork::NodeHandle::Null) {
 			//Found tracking node
 			auto nodeSerialNo = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), Antilatency::DeviceNetwork::Interop::Constants::HardwareSerialNumberKey);
+			auto nodeTag = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), "Tag");
 			//std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
+			std::cout << "Tag: " << nodeTag << std::endl;
 			//char Msg[80] = "Tracking node found, serial number: ";
 			//strcat(Msg, nodeSerialNo.c_str());
 			//myPopup = Msg;
@@ -472,7 +474,7 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 			#ifdef _WIN32
 			sprintf_s(tempBuffer, "%f\t", markers[i].x);
 			#else // macOS
-			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", myExecuteCount);
+			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", markers[i].x);
 			#endif
 			int j = i + 1;
 			entries->values[j]->setString(tempBuffer);
@@ -488,7 +490,7 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 #ifdef _WIN32
 			sprintf_s(tempBuffer, "%f\t", markers[i].y);
 #else // macOS
-			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", myExecuteCount);
+			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", markers[i].y);
 #endif
 			int j = i + 1;
 			entries->values[j]->setString(tempBuffer);
@@ -502,7 +504,7 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 #ifdef _WIN32
 			sprintf_s(tempBuffer, "%f\t", markers[i].z);
 #else // macOS
-			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", myExecuteCount);
+			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", markers[i].z);
 #endif
 			int j = i + 1;
 			entries->values[j]->setString(tempBuffer);
