@@ -1,6 +1,9 @@
 # AntilatencyCHOP
 
-Use [Antilatency](https://antilatency.com/) in [TouchDesigner](https://derivative.ca/).
+[Antilatency]:https://antilatency.com/ "HomePage"
+[TouchDesigner]:https://derivative.ca/ "HomePage"
+
+[TouchDesigner] C++ CHOP for [Antilatency].
 
 ![](img/sc01.png)
 
@@ -30,3 +33,4 @@ Early test version, not suitable for production environment. Anyone who is inter
 ## Disclaimer
 - I am not responsible for any risks caused by using this product in any production site.
 - All SDKs and quoted samples are owned by their sources, and I do not claim any rights regarding them.
+
