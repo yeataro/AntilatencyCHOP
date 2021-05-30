@@ -1,3 +1,2 @@
-﻿d:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: 中繼目錄 (Debug\) 包含從其他專案 (CPlusPlusCHOPExample.vcxproj) 共用的檔案。這可能導致錯誤的清除和重建行為。
-  AntilatencyCHOP.cpp
-d:\dropbox\yea\git\chill\td-antilatencychop\antilatencychop\antilatencychop.cpp(35): fatal error C1083: 無法開啟包含檔案: 'Antilatency.InterfaceContract.LibraryLoader.h': No such file or directory
+﻿  AntilatencyCHOP.cpp
+c:\users\yeataro\dropbox\yea\git\yeataro\antilatencychop\antilatencychop\antilatencychop.h(17): fatal error C1083: 無法開啟包含檔案: 'Antilatency.InterfaceContract.LibraryLoader.h': No such file or directory

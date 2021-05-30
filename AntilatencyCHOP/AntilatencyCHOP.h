@@ -110,11 +110,11 @@ private:
 
 	const char*		 ENVcode;
 	int32_t				MarkersSize;
-	//Antilatency::Math::float3		Markers;
+	std::vector<Antilatency::Math::float3>		markers;
 
 	//Flag
 	uint32_t				updateId = 0;
-	bool					ANTIexec = false;
+	bool					ANTIsetup = false;
 
 	Antilatency::DeviceNetwork::INetwork deviceNetwork;
 	Antilatency::Alt::Tracking::ILibrary altTrackingLibrary;

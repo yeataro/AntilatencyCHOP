@@ -35,73 +35,6 @@ using namespace std;
 #include <Windows.h>
 
 
-//Returns the first idle alt tracker node just for demonstration purposes
-void
-AntilatencyCHOP::GetTrackingNode() {
-    auto result = Antilatency::DeviceNetwork::NodeHandle::Null;
-
-    auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
-
-    auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
-    if (!nodes.empty()) {
-        for (auto node : nodes) {
-            if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
-                result = node;
-				//TBD:get multiple node here
-                break;
-            }
-        }
-    }
-	trackingNode = result;
-   // return result;
-}
-
-
-
-
-//Run tracking task on node and print tracking data
-void
-AntilatencyCHOP::RunTrackingTask() {
-
-	//std::cout << "RunTrackingTask" << std::endl;
-
-	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
-
-	//std::cout << "auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor(); " << std::endl;
-
-	trackingCotask = cotaskConstructor.startTask(deviceNetwork, trackingNode, environment);
-
-	myError = nullptr;
-	myWarning = nullptr;
-	myPopup = nullptr;
-
-	//std::cout << "trackingCotask = cotaskConstructor.startTask(deviceNetwork, node, environment);" << std::endl;
-
-
-}
-
-void
-AntilatencyCHOP::GetTrackingData() {
-	if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
-		//Get raw tracker state
-		//auto state = trackingCotask.getState(Antilatency::Alt::Tracking::Constants::DefaultAngularVelocityAvgTime);
-		//std::cout << "Raw position x: " << state.pose.position.x << ", y: " << state.pose.position.y << ", z: " << state.pose.position.z << std::endl;
-
-		//Get extrapolated tracker state with placement correction
-		auto extrapolatedState = trackingCotask.getExtrapolatedState(placement, 0.06f);
-
-		Pos = extrapolatedState.pose.position;
-		Rotate = extrapolatedState.pose.rotation;
-	}
-	else {
-		trackingCotask = {};
-	}
-	Yield();
-}
-
-
-
-//newline
 
 // These functions are basic C function, which the DLL loader can find
 // much easier than finding a C++ Class.
@@ -205,8 +138,8 @@ AntilatencyCHOP::setupDevice()
 	deviceNetwork = adnLibrary.createNetwork(std::vector<Antilatency::DeviceNetwork::UsbDeviceType>{antilatencyUsbDeviceType, antilatencyUsbDeviceTypeLegacy});
 
 	//Antilatency::DeviceNetwork::NodeHandle trackingNode;
-	updateEnv();
-	ANTIexec = true;
+	//updateEnv();
+	ANTIsetup = true;
 }
 
 void
@@ -233,6 +166,7 @@ AntilatencyCHOP::updateDevice( )
 			//tbd:output to info
 			RunTrackingTask();
 			//return;
+			myWarning = nullptr;
 		}
 		else {
 			//std::cout << "Tracking node not found." << std::endl;
@@ -250,24 +184,27 @@ AntilatencyCHOP::updateEnv()
 	auto environmentCode = antilatencyStorageClient.getLocalStorage().read("environment", "default");
 	auto placementCode = antilatencyStorageClient.getLocalStorage().read("placement", "default");
 	myWarning = nullptr;
-	environment = altTrackingLibrary.createEnvironment(environmentCode);
+	//environment = altTrackingLibrary.createEnvironment(environmentCode);
 	placement = altTrackingLibrary.createPlacement(placementCode);
 	
 	//NOT A GOOD WAY
-	if (strcmp(ENVcode,"AA") > 0){
-
+	if (strncmp(ENVcode,"AA",2) == 0){
+		myWarning = nullptr;
 	try {
 		environment = altTrackingLibrary.createEnvironment(ENVcode);
-		std::cout << environment << std::endl;
+		//std::cout << environment << std::endl;
 		if (environment == nullptr) {
-			myError = "Could not create environment!";
-			return;
+			myWarning = "Can't use this environment code, use the default.";
+			environment = altTrackingLibrary.createEnvironment(environmentCode);
+			//return;
 			//continue;
 		}
 	}
 	catch (const std::exception &ex) 
 	{
 		myWarning = "Can't use this environment code, use the default.";
+		environment = altTrackingLibrary.createEnvironment(environmentCode);
+		//myError = ex.what();
 		//std::cout << "Can't use that environmentCode, using default." << std::endl;
 	}
 	//std::cout << ENVcode << std::endl;
@@ -275,8 +212,12 @@ AntilatencyCHOP::updateEnv()
 	}
 	else {
 		myWarning = "The environment code is too short or none, use the default";
+		environment = altTrackingLibrary.createEnvironment(environmentCode);
 	}
-	auto markers = environment.getMarkers();
+
+
+	//auto markers = environment.getMarkers();
+	markers = environment.getMarkers();
 	//std::cout << "Environment markers count: " << markers.size() << std::endl;
 	//tbd:output to info
 	MarkersSize = markers.size();
@@ -289,10 +230,80 @@ AntilatencyCHOP::updateEnv()
 
 
 
+//Returns the first idle alt tracker node just for demonstration purposes
+void
+AntilatencyCHOP::GetTrackingNode() {
+	auto result = Antilatency::DeviceNetwork::NodeHandle::Null;
+
+	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
+
+	auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
+	if (!nodes.empty()) {
+		for (auto node : nodes) {
+			if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
+				result = node;
+				//TBD:get multiple node here
+				break;
+			}
+		}
+	}
+	trackingNode = result;
+	// return result;
+}
+
+
+
+
+//Run tracking task on node and print tracking data
+void
+AntilatencyCHOP::RunTrackingTask() {
+
+	//std::cout << "RunTrackingTask" << std::endl;
+
+	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
+
+	//std::cout << "auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor(); " << std::endl;
+
+	trackingCotask = cotaskConstructor.startTask(deviceNetwork, trackingNode, environment);
+
+	//myError = nullptr;
+	//myWarning = nullptr;
+	//myPopup = nullptr;
+
+	//std::cout << "trackingCotask = cotaskConstructor.startTask(deviceNetwork, node, environment);" << std::endl;
+
+
+}
+
+//Get data from device
+void
+AntilatencyCHOP::GetTrackingData() {
+	if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
+		//Get raw tracker state
+		//auto state = trackingCotask.getState(Antilatency::Alt::Tracking::Constants::DefaultAngularVelocityAvgTime);
+		//std::cout << "Raw position x: " << state.pose.position.x << ", y: " << state.pose.position.y << ", z: " << state.pose.position.z << std::endl;
+
+		//Get extrapolated tracker state with placement correction
+		auto extrapolatedState = trackingCotask.getExtrapolatedState(placement, 0.06f);
+
+		Pos = extrapolatedState.pose.position;
+		Rotate = extrapolatedState.pose.rotation;
+	}
+	else {
+		trackingCotask = {};
+	}
+	Yield();
+}
+
+
+
 AntilatencyCHOP::AntilatencyCHOP(const OP_NodeInfo* info) : myNodeInfo(info), myError(nullptr)
 {
 	myExecuteCount = 0;
 	myOffset = 0.0;
+	myError = nullptr;
+
+
 	//ADNversion = nullptr;
 
 }
@@ -350,7 +361,7 @@ void
 AntilatencyCHOP::getChannelName(int32_t index, OP_String *name, const OP_Inputs* inputs, void* reserved1)
 {
 	//Change way to input Envcode
-	ENVcode = inputs->getParString("Envcode");
+	//ENVcode = inputs->getParString("Envcode");
 	//std::cout << ENVcode << std::endl;
 	switch (index) {
 	case 0:
@@ -385,16 +396,39 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 	myExecuteCount++;
 	//uint32_t updateId = 0;
 
-	if (!ANTIexec) {
-		setupDevice();
+	ENVcode = inputs->getParString("Envcode");
+
+	//if (deviceNetwork == nullptr)
+	if (!ANTIsetup)
+	{
+		try {
+			setupDevice();
+			ENVcode = inputs->getParString("Envcode");
+			updateEnv();
+			//std::cout << "setupDevice()" << std::endl;
+		}
+		catch (const std::exception &ex)
+		{
+			myError = ex.what();
+		}
 	}
+	
+
 
 		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
 			GetTrackingData();
 		}
 		else
 		{
-			updateDevice();
+			if(deviceNetwork != nullptr) {
+				updateDevice();
+
+			}
+			else
+			{
+				myError = "Can't get deviceNetwork! It may be that another thread has already used it.";
+			}
+			
 		}
 
 
@@ -464,8 +498,8 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 	char tempBuffer[4096];
 
 	//TBD:dont get here
-	auto markers = environment.getMarkers();
-	MarkersSize = markers.size();
+	//auto markers = environment.getMarkers();
+	//MarkersSize = markers.size();
 
 	if (index == 0){
 		entries->values[0]->setString("mark:tx");
@@ -634,9 +668,7 @@ AntilatencyCHOP::pulsePressed(const char* name, void* reserved1)
 		trackingCotask = {};
 		updateEnv();
 		RunTrackingTask();
-		//setupDevice();
 	}
-	//myExecuteCount = 100;
 }
 
 
