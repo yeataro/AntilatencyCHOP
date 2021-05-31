@@ -81,10 +81,13 @@ public:
 	virtual void		updateEnv();
 
 	virtual void		GetTrackingNode();
+	virtual void		GetTrackingNodes();
 
 	virtual void		RunTrackingTask();
 
 	virtual void		GetTrackingData();
+
+	virtual Antilatency::Alt::Tracking::ITrackingCotask 		RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode);
 
 
 private:
@@ -125,4 +128,7 @@ private:
 	Antilatency::Math::float3  Pos;
 	Antilatency::Math::floatQ Rotate;
 	Antilatency::Alt::Tracking::State *RawState;
+
+	std::vector<Antilatency::DeviceNetwork::NodeHandle> ActNodes;
+	std::vector <Antilatency::Alt::Tracking::ITrackingCotask>TrackingCotasks;
 };

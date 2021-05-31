@@ -222,13 +222,13 @@ AntilatencyCHOP::updateEnv()
 	//tbd:output to info
 	MarkersSize = markers.size();
 	//Markers = markers;
+	/*
 	for (auto i = 0; i < markers.size(); ++i) {
 		std::cout << "Marker " << i << ": {" << markers[i].x << ", " << markers[i].y << ", " << markers[i].z << "}" << std::endl;
 		//tbd:output to info
 	}
+	*/
 }
-
-
 
 //Returns the first idle alt tracker node just for demonstration purposes
 void
@@ -248,6 +248,44 @@ AntilatencyCHOP::GetTrackingNode() {
 		}
 	}
 	trackingNode = result;
+	// return result;
+}
+
+
+
+//Returns the first idle alt tracker node just for demonstration purposes
+void
+AntilatencyCHOP::GetTrackingNodes() {
+	auto result = Antilatency::DeviceNetwork::NodeHandle::Null;
+
+	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
+
+	//get multiple node here
+	auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
+	if (!nodes.empty()) {
+		for (auto node : nodes) {
+			if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
+
+				ActNodes.push_back(node);
+
+			}
+		}
+	}
+
+
+	/* old code.
+	auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
+	if (!nodes.empty()) {
+		for (auto node : nodes) {
+			if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
+				result = node;
+				//TBD:get multiple node here
+				break;
+			}
+		}
+	}
+	trackingNode = result;
+	*/
 	// return result;
 }
 
@@ -274,6 +312,22 @@ AntilatencyCHOP::RunTrackingTask() {
 
 
 }
+
+Antilatency::Alt::Tracking::ITrackingCotask
+AntilatencyCHOP::RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode) {
+
+	//std::cout << "RunTrackingTask" << std::endl;
+
+	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
+
+	//std::cout << "auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor(); " << std::endl;
+
+	auto Cotask = cotaskConstructor.startTask(deviceNetwork, inputNode, environment);
+
+	return Cotask;
+}
+
+
 
 //Get data from device
 void

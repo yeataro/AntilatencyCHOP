@@ -28,7 +28,7 @@ Early test version, not suitable for production environment. Anyone who is inter
     >Fix - but deviceNetwork won't setup again.
 
 - ~~Some specific environment code will cause a crash (it is guessed that it can be decoded by bese64 but the content is incorrect).~~
-    >Fix
+    >Fix.
 
 ## Disclaimer
 - I am not responsible for any risks caused by using this product in any production site.
