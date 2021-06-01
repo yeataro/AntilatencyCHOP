@@ -271,22 +271,6 @@ AntilatencyCHOP::GetTrackingNodes() {
 			}
 		}
 	}
-
-
-	/* old code.
-	auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
-	if (!nodes.empty()) {
-		for (auto node : nodes) {
-			if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
-				result = node;
-				//TBD:get multiple node here
-				break;
-			}
-		}
-	}
-	trackingNode = result;
-	*/
-	// return result;
 }
 
 
@@ -345,6 +329,27 @@ AntilatencyCHOP::GetTrackingData() {
 	}
 	else {
 		trackingCotask = {};
+	}
+	Yield();
+}
+
+//Get data from devices
+Antilatency::Alt::Tracking::State
+AntilatencyCHOP::GetTrackingDatas(Antilatency::Alt::Tracking::ITrackingCotask *cotask) {
+	if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
+		//Get raw tracker state
+		//auto state = trackingCotask.getState(Antilatency::Alt::Tracking::Constants::DefaultAngularVelocityAvgTime);
+		//std::cout << "Raw position x: " << state.pose.position.x << ", y: " << state.pose.position.y << ", z: " << state.pose.position.z << std::endl;
+
+		//Get extrapolated tracker state with placement correction
+		auto extrapolatedState = trackingCotask.getExtrapolatedState(placement, 0.06f);
+
+		//Pos = extrapolatedState.pose.position;
+		//Rotate = extrapolatedState.pose.rotation;
+		return extrapolatedState;
+	}
+	else {
+		cotask = {};
 	}
 	Yield();
 }
@@ -463,12 +468,38 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 		}
 		catch (const std::exception &ex)
 		{
-			myError = ex.what();
+			//myError = ex.what();
+			myError = "Can't setupDevice!!";
 		}
 	}
 	
+	
+	for (auto node : ActNodes) {
+
+		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
+			GetTrackingData();
+		}
+		else
+		{
+			if (deviceNetwork != nullptr) {
+				updateDevice();
+
+			}
+			else
+			{
+				myError = "Can't get deviceNetwork! It may be that another thread has already used it.";
+			}
+
+		}
 
 
+	}
+
+
+	
+
+
+	/* single device
 		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
 			GetTrackingData();
 		}
@@ -498,7 +529,8 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 			output->channels[5][j] = Rotate.z;
 			output->channels[6][j] = Rotate.w;
 		}
-	
+
+	*/
 	double rate = inputs->getParDouble("Frequency", 0);	
 
 }
