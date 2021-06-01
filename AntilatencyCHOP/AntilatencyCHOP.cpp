@@ -156,9 +156,9 @@ AntilatencyCHOP::updateDevice( )
 		if (trackingNode != Antilatency::DeviceNetwork::NodeHandle::Null) {
 			//Found tracking node
 			auto nodeSerialNo = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), Antilatency::DeviceNetwork::Interop::Constants::HardwareSerialNumberKey);
-			auto nodeTag = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), "Tag");
-			std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
-			std::cout << "Tag: " << nodeTag << std::endl;
+			//auto nodeTag = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), "Tag");
+			//std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
+			//std::cout << "Tag: " << nodeTag << std::endl;
 			//char Msg[80] = "Tracking node found, serial number: ";
 			//strcat(Msg, nodeSerialNo.c_str());
 			//myPopup = Msg;
@@ -253,7 +253,7 @@ AntilatencyCHOP::GetTrackingNode() {
 
 
 
-//Returns the first idle alt tracker node just for demonstration purposes
+/*/Returns the first idle alt tracker node just for demonstration purposes
 void
 AntilatencyCHOP::GetTrackingNodes() {
 	auto result = Antilatency::DeviceNetwork::NodeHandle::Null;
@@ -272,7 +272,7 @@ AntilatencyCHOP::GetTrackingNodes() {
 		}
 	}
 }
-
+/*/
 
 
 
@@ -297,6 +297,7 @@ AntilatencyCHOP::RunTrackingTask() {
 
 }
 
+/*
 Antilatency::Alt::Tracking::ITrackingCotask
 AntilatencyCHOP::RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode) {
 
@@ -310,7 +311,7 @@ AntilatencyCHOP::RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNo
 
 	return Cotask;
 }
-
+*/
 
 
 //Get data from device
@@ -333,7 +334,7 @@ AntilatencyCHOP::GetTrackingData() {
 	Yield();
 }
 
-//Get data from devices
+/*/Get data from devices
 Antilatency::Alt::Tracking::State
 AntilatencyCHOP::GetTrackingDatas(Antilatency::Alt::Tracking::ITrackingCotask *cotask) {
 	if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
@@ -353,7 +354,7 @@ AntilatencyCHOP::GetTrackingDatas(Antilatency::Alt::Tracking::ITrackingCotask *c
 	}
 	Yield();
 }
-
+/*/
 
 
 AntilatencyCHOP::AntilatencyCHOP(const OP_NodeInfo* info) : myNodeInfo(info), myError(nullptr)
@@ -468,12 +469,19 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 		}
 		catch (const std::exception &ex)
 		{
-			//myError = ex.what();
-			myError = "Can't setupDevice!!";
+			auto error = ex.what();
+			
+			if (strstr(error, "Property")) {
+				myError = "Device Property  doesn't exist. May need to upgrade the firmware.";
+			}
+			else {
+				myError = ex.what();
+			}
+			//myError = "Can't setupDevice!!";
 		}
 	}
 	
-	
+	/*
 	for (auto node : ActNodes) {
 
 		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
@@ -494,12 +502,12 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 
 
 	}
-
+	*/
 
 	
 
 
-	/* single device
+	//*single device
 		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
 			GetTrackingData();
 		}
@@ -530,7 +538,7 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 			output->channels[6][j] = Rotate.w;
 		}
 
-	*/
+	//*/
 	double rate = inputs->getParDouble("Frequency", 0);	
 
 }

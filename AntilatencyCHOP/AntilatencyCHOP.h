@@ -87,8 +87,15 @@ public:
 
 	virtual void		GetTrackingData();
 
-	virtual Antilatency::Alt::Tracking::ITrackingCotask 		RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode);
 
+	/*/multi
+	virtual Antilatency::Alt::Tracking::ITrackingCotask
+	RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode);
+
+	virtual Antilatency::Alt::Tracking::State
+	AntilatencyCHOP::GetTrackingDatas(Antilatency::Alt::Tracking::ITrackingCotask *cotask);
+	//
+	*/
 
 private:
 
