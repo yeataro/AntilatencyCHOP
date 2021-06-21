@@ -16,6 +16,7 @@ Early test version, not suitable for production environment. Anyone who is inter
 - [ ] Multi-threaded sampling at high speed.
 - [x] Export the mark points of the environment configuration to info DAT.
     - [ ] keep info DAT for device info, create an py object for the mark points.
+- [ ] [SDK 3.0.0](https://github.com/AntilatencySDK/Release_3.0.0/tree/subset-1a9364188c87e306d2992003ab6d2f5d1b1333b7)
 - Paramaters:
     - [ ] Add "Tag" to the channel name. (Toggle)
     - [ ] Add "Serial number" to the channel name. (Toggle)
