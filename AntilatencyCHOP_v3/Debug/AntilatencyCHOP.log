@@ -1,0 +1,2 @@
+﻿  AntilatencyCHOP.cpp
+c:\users\yeataro\dropbox\yea\git\yeataro\antilatencychop\antilatencychop\antilatencychop.h(17): fatal error C1083: 無法開啟包含檔案: 'Antilatency.InterfaceContract.LibraryLoader.h': No such file or directory

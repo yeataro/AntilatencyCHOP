@@ -1,0 +1,46 @@
+﻿  AntilatencyCHOP.cpp
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(129,30): error C2039: 'UsbDeviceType': 並非 'Antilatency::DeviceNetwork' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.DeviceNetwork.h(1163): message : 請參閱 'Antilatency::DeviceNetwork' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(129,44): error C2065: 'UsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(129,44): error C2146: 語法錯誤: 遺漏 ';' (在識別項 'antilatencyUsbDeviceType' 之前)
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(129,44): error C2065: 'antilatencyUsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(130,2): error C2065: 'antilatencyUsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(131,2): error C2065: 'antilatencyUsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(134,30): error C2039: 'UsbDeviceType': 並非 'Antilatency::DeviceNetwork' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.DeviceNetwork.h(1163): message : 請參閱 'Antilatency::DeviceNetwork' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(134,44): error C2065: 'UsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(134,44): error C2146: 語法錯誤: 遺漏 ';' (在識別項 'antilatencyUsbDeviceTypeLegacy' 之前)
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(134,44): error C2065: 'antilatencyUsbDeviceTypeLegacy': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(135,2): error C2065: 'antilatencyUsbDeviceTypeLegacy': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(136,2): error C2065: 'antilatencyUsbDeviceTypeLegacy': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(136,80): error C2838: 'AntilatencyLegacy': 成員宣告中的限定名稱不合法
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(136,97): error C2065: 'AntilatencyLegacy': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,83): error C2039: 'UsbDeviceType': 並非 'Antilatency::DeviceNetwork' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.DeviceNetwork.h(1163): message : 請參閱 'Antilatency::DeviceNetwork' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,96): error C2065: 'UsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,48): error C2923: 'std::vector': 對參數 '_Ty' 而言，'UsbDeviceType' 不是有效的 樣板 型別引數
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138): message : 請參閱 'UsbDeviceType' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,48): error C2976: 'std::vector': 樣板 引數太少
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include\vector(432): message : 請參閱 'std::vector' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,48): error C2955: 'std::vector': 使用 類別 樣板 必須有 樣板 引數清單
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include\vector(432): message : 請參閱 'std::vector' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,98): error C2065: 'antilatencyUsbDeviceType': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(138,124): error C2065: 'antilatencyUsbDeviceTypeLegacy': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(194,3): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(194,36): error C2039: 'createEnvironment': 並非 'Antilatency::Alt::Tracking::ILibrary' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.Alt.Tracking.h(551): message : 請參閱 'Antilatency::Alt::Tracking::ILibrary' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(196,7): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(198,4): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(198,37): error C2039: 'createEnvironment': 並非 'Antilatency::Alt::Tracking::ILibrary' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.Alt.Tracking.h(551): message : 請參閱 'Antilatency::Alt::Tracking::ILibrary' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(206,3): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(206,36): error C2039: 'createEnvironment': 並非 'Antilatency::Alt::Tracking::ILibrary' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.Alt.Tracking.h(551): message : 請參閱 'Antilatency::Alt::Tracking::ILibrary' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(215,3): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(215,36): error C2039: 'createEnvironment': 並非 'Antilatency::Alt::Tracking::ILibrary' 的成員
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\Release_3.5.0\Api\Antilatency.Alt.Tracking.h(551): message : 請參閱 'Antilatency::Alt::Tracking::ILibrary' 的宣告
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(220,12): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(223,30): warning C4267: '=': 將 'size_t' 轉換為 'int32_t'，資料可能遺失
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(289,76): error C2065: 'environment': 未宣告的識別項
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(416,22): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\chill\Dropbox (chillprd)\yea\git\yeataro\AntilatencyCHOP\AntilatencyCHOP_v3\AntilatencyCHOP.cpp(514,20): warning C4244: '引數': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失

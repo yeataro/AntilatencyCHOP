@@ -81,11 +81,11 @@ public:
 	virtual void		updateEnv();
 
 	virtual void		GetTrackingNode();
-	virtual void		GetTrackingNodes();
+	//virtual void		GetTrackingNodes();
 
 	virtual void		RunTrackingTask();
 
-	virtual void		GetTrackingData();
+	virtual void		GetTrackingData(float Deltatime);
 
 
 	/*/multi
