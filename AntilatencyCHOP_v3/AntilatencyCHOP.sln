@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AntilatencyCHOP", "AntilatencyCHOP.vcxproj", "{3F5BEECD-FA36-459F-91B8-BB481A67EF44}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AntilatencyCHOP", "CPlusPlusCHOPExample.vcxproj", "{3F5BEECD-FA36-459F-91B8-BB481A67EF44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {8EF8D79B-60D7-4C52-ABDE-AB820B80121E}
+		SolutionGuid = {0477C9F9-47D0-4C9B-9FC4-99A52D3F0CD5}
 	EndGlobalSection
 EndGlobal

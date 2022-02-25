@@ -14,16 +14,6 @@
 
 #include "CHOP_CPlusPlusBase.h"
 
-#include <Antilatency.InterfaceContract.LibraryLoader.h>
-#include <Antilatency.Alt.Environment.h>
-#include <Antilatency.DeviceNetwork.h>
-#include <Antilatency.StorageClient.h>
-#include <Antilatency.Alt.Tracking.h>
-//#include <string>
-
-
-//newline
-
 /*
 
 This example file implements a class that does 2 different things depending on
@@ -66,37 +56,9 @@ public:
 											int32_t nEntries,
 											OP_InfoDATEntries* entries,
 											void* reserved1) override;
-	//
-	virtual void		getErrorString(OP_String *error, void* reserved1) override;
-	virtual void		getInfoPopupString(OP_String *popup, void* reserved1) override;
-	virtual void		getWarningString(OP_String *warning, void *reserved1);
-	//
+
 	virtual void		setupParameters(OP_ParameterManager* manager, void *reserved1) override;
-	virtual void		pulsePressed(const char* name, void* reserved1);
-	
-	//virtual void		GetTrackingData(Antilatency::DeviceNetwork::NodeHandle* node) override;
-	virtual void		setupDevice();
-
-	virtual void		updateDevice();
-
-	virtual void		updateEnv();
-
-	virtual void		GetTrackingNode();
-	//virtual void		GetTrackingNodes();
-
-	virtual void		RunTrackingTask();
-
-	virtual void		GetTrackingData(float Deltatime);
-
-
-	/*/multi
-	virtual Antilatency::Alt::Tracking::ITrackingCotask
-	RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode);
-
-	virtual Antilatency::Alt::Tracking::State
-	AntilatencyCHOP::GetTrackingDatas(Antilatency::Alt::Tracking::ITrackingCotask *cotask);
-	//
-	*/
+	virtual void		pulsePressed(const char* name, void* reserved1) override;
 
 private:
 
@@ -108,35 +70,9 @@ private:
 	// In this example this value will be incremented each time the execute()
 	// function is called, then passes back to the CHOP 
 	int32_t				myExecuteCount;
+
+
 	double				myOffset;
 
 
-	//int32_t				DeviceConnect
-
-	const char*			myError;
-	const char*			myPopup;
-	const char*			myWarning;
-
-	//std::string			 ADNversion;
-
-	const char*		 ENVcode;
-	int32_t				MarkersSize;
-	std::vector<Antilatency::Math::float3>		markers;
-
-	//Flag
-	uint32_t				updateId = 0;
-	bool					ANTIsetup = false;
-
-	Antilatency::DeviceNetwork::INetwork deviceNetwork;
-	Antilatency::Alt::Tracking::ILibrary altTrackingLibrary;
-	Antilatency::Alt::Tracking::ITrackingCotask trackingCotask;
-	//Antilatency::Alt::Tracking::IEnvironment environment;
-	Antilatency::Math::floatP3Q placement;
-	Antilatency::DeviceNetwork::NodeHandle trackingNode;
-	Antilatency::Math::float3  Pos;
-	Antilatency::Math::floatQ Rotate;
-	Antilatency::Alt::Tracking::State *RawState;
-
-	std::vector<Antilatency::DeviceNetwork::NodeHandle> ActNodes;
-	std::vector <Antilatency::Alt::Tracking::ITrackingCotask>TrackingCotasks;
 };

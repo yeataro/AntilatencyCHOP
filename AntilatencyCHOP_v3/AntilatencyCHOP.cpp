@@ -12,29 +12,12 @@
 * prior written permission from Derivative.
 */
 
-//multithread
-#include <thread>
-
 #include "AntilatencyCHOP.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
-
-//newline
-
-#include <vector>
-//#include <cout>
-using namespace std;
-
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <Windows.h>
-
-
 
 // These functions are basic C function, which the DLL loader can find
 // much easier than finding a C++ Class.
@@ -86,287 +69,15 @@ DestroyCHOPInstance(CHOP_CPlusPlusBase* instance)
 	// Touch is shutting down, when the CHOP using that instance is deleted, or
 	// if the CHOP loads a different DLL
 	delete (AntilatencyCHOP*)instance;
-
-
 }
 
 };
 
 
-void
-AntilatencyCHOP::setupDevice() 
-{
-
-	myError = nullptr;
-
-	auto adnLibrary = Antilatency::InterfaceContract::getLibraryInterface<Antilatency::DeviceNetwork::ILibrary>("AntilatencyDeviceNetwork");
-	auto antilatencyStorageClient = Antilatency::InterfaceContract::getLibraryInterface<Antilatency::StorageClient::ILibrary>("AntilatencyStorageClient");
-	altTrackingLibrary = Antilatency::InterfaceContract::getLibraryInterface<Antilatency::Alt::Tracking::ILibrary>("AntilatencyAltTracking");
-
-	if (adnLibrary == nullptr) {
-		//std::cout << "Failed to load AntilatencyDeviceNetwork library" << std::endl;
-		myError = "Failed to load AntilatencyDeviceNetwork library!";
-		return;
-	}
-
-	if (antilatencyStorageClient == nullptr) {
-		//std::cout << "Failed to load AntilatencyStorageClient library" << std::endl;
-		myError = "Failed to load AntilatencyStorageClient library";
-		return;
-	}
-
-	if (altTrackingLibrary == nullptr) {
-		//std::cout << "Failed to load AntilatencyAltTracking library" << std::endl;
-		myError = "Failed to load AntilatencyAltTracking library";
-		return;
-	}
-
-	adnLibrary.setLogLevel(Antilatency::DeviceNetwork::LogLevel::Info);
-
-	//std::cout << "ADN version: " << adnLibrary.getVersion() << std::endl;
-
-	//Alt socket USB device ID
-	Antilatency::DeviceNetwork::UsbDeviceType antilatencyUsbDeviceType;
-	antilatencyUsbDeviceType.pid = 0x0000;
-	antilatencyUsbDeviceType.vid = Antilatency::DeviceNetwork::UsbVendorId::Antilatency;
-
-	//Alt socket USB device ID (deprecated)
-	Antilatency::DeviceNetwork::UsbDeviceType antilatencyUsbDeviceTypeLegacy;
-	antilatencyUsbDeviceTypeLegacy.pid = 0x0000;
-	antilatencyUsbDeviceTypeLegacy.vid = Antilatency::DeviceNetwork::UsbVendorId::AntilatencyLegacy;
-
-	deviceNetwork = adnLibrary.createNetwork(std::vector<Antilatency::DeviceNetwork::UsbDeviceType>{antilatencyUsbDeviceType, antilatencyUsbDeviceTypeLegacy});
-
-	//Antilatency::DeviceNetwork::NodeHandle trackingNode;
-	//updateEnv();
-	ANTIsetup = true;
-}
-
-void
-AntilatencyCHOP::updateDevice( )
-{
-	auto newUpdateId = deviceNetwork.getUpdateId();
-	if (updateId != newUpdateId) {
-		updateId = newUpdateId;
-
-		//std::cout << "Factory update id has been incremented, searching for available tracking node..." << std::endl;
-		//myPopup = "Factory update id has been incremented, searching for available tracking node...";
-		GetTrackingNode();
-		//trackingNode = GetTrackingNode();
-		if (trackingNode != Antilatency::DeviceNetwork::NodeHandle::Null) {
-			//Found tracking node
-			auto nodeSerialNo = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), Antilatency::DeviceNetwork::Interop::Constants::HardwareSerialNumberKey);
-			//auto nodeTag = deviceNetwork.nodeGetStringProperty(deviceNetwork.nodeGetParent(trackingNode), "Tag");
-			//std::cout << "Tracking node found, serial number: " << nodeSerialNo << std::endl;
-			//std::cout << "Tag: " << nodeTag << std::endl;
-			//char Msg[80] = "Tracking node found, serial number: ";
-			//strcat(Msg, nodeSerialNo.c_str());
-			//myPopup = Msg;
-			
-			//tbd:output to info
-			RunTrackingTask();
-			//return;
-			myWarning = nullptr;
-		}
-		else {
-			//std::cout << "Tracking node not found." << std::endl;
-			myWarning = "Tracking node not found, searching for available tracking node...";
-			//return;
-
-		}
-	}
-}
-
-void
-AntilatencyCHOP::updateEnv()
-{
-	auto antilatencyStorageClient = Antilatency::InterfaceContract::getLibraryInterface<Antilatency::StorageClient::ILibrary>("AntilatencyStorageClient");
-	auto environmentCode = antilatencyStorageClient.getLocalStorage().read("environment", "default");
-	auto placementCode = antilatencyStorageClient.getLocalStorage().read("placement", "default");
-	myWarning = nullptr;
-	//environment = altTrackingLibrary.createEnvironment(environmentCode);
-	placement = altTrackingLibrary.createPlacement(placementCode);
-	
-	//NOT A GOOD WAY
-	if (strncmp(ENVcode,"AA",2) == 0){
-		myWarning = nullptr;
-	try {
-		environment = altTrackingLibrary.createEnvironment(ENVcode);
-		//std::cout << environment << std::endl;
-		if (environment == nullptr) {
-			myWarning = "Can't use this environment code, use the default.";
-			environment = altTrackingLibrary.createEnvironment(environmentCode);
-			//return;
-			//continue;
-		}
-	}
-	catch (const std::exception &ex) 
-	{
-		myWarning = "Can't use this environment code, use the default.";
-		environment = altTrackingLibrary.createEnvironment(environmentCode);
-		//myError = ex.what();
-		//std::cout << "Can't use that environmentCode, using default." << std::endl;
-	}
-	//std::cout << ENVcode << std::endl;
-
-	}
-	else {
-		myWarning = "The environment code is too short or none, use the default";
-		environment = altTrackingLibrary.createEnvironment(environmentCode);
-	}
-
-
-	//auto markers = environment.getMarkers();
-	markers = environment.getMarkers();
-	//std::cout << "Environment markers count: " << markers.size() << std::endl;
-	//tbd:output to info
-	MarkersSize = markers.size();
-	//Markers = markers;
-	/*
-	for (auto i = 0; i < markers.size(); ++i) {
-		std::cout << "Marker " << i << ": {" << markers[i].x << ", " << markers[i].y << ", " << markers[i].z << "}" << std::endl;
-		//tbd:output to info
-	}
-	*/
-}
-
-//Returns the first idle alt tracker node just for demonstration purposes
-void
-AntilatencyCHOP::GetTrackingNode() {
-	auto result = Antilatency::DeviceNetwork::NodeHandle::Null;
-
-	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
-
-	auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
-	if (!nodes.empty()) {
-		for (auto node : nodes) {
-			if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
-				result = node;
-				//TBD:get multiple node here
-				break;
-			}
-		}
-	}
-	trackingNode = result;
-	// return result;
-}
-
-
-
-/*/Returns the first idle alt tracker node just for demonstration purposes
-void
-AntilatencyCHOP::GetTrackingNodes() {
-	auto result = Antilatency::DeviceNetwork::NodeHandle::Null;
-
-	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
-
-	//get multiple node here
-	auto nodes = cotaskConstructor.findSupportedNodes(deviceNetwork);
-	if (!nodes.empty()) {
-		for (auto node : nodes) {
-			if (deviceNetwork.nodeGetStatus(node) == Antilatency::DeviceNetwork::NodeStatus::Idle) {
-
-				ActNodes.push_back(node);
-
-			}
-		}
-	}
-}
-/*/
-
-
-
-//Run tracking task on node and print tracking data
-void
-AntilatencyCHOP::RunTrackingTask() {
-
-	//std::cout << "RunTrackingTask" << std::endl;
-
-	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
-
-	//std::cout << "auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor(); " << std::endl;
-
-	trackingCotask = cotaskConstructor.startTask(deviceNetwork, trackingNode, environment);
-
-	//myError = nullptr;
-	//myWarning = nullptr;
-	//myPopup = nullptr;
-
-	//std::cout << "trackingCotask = cotaskConstructor.startTask(deviceNetwork, node, environment);" << std::endl;
-
-
-}
-
-/*
-Antilatency::Alt::Tracking::ITrackingCotask
-AntilatencyCHOP::RunTrackingTasks(Antilatency::DeviceNetwork::NodeHandle inputNode) {
-
-	//std::cout << "RunTrackingTask" << std::endl;
-
-	auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor();
-
-	//std::cout << "auto cotaskConstructor = altTrackingLibrary.createTrackingCotaskConstructor(); " << std::endl;
-
-	auto Cotask = cotaskConstructor.startTask(deviceNetwork, inputNode, environment);
-
-	return Cotask;
-}
-*/
-
-
-//Get data from device
-void
-AntilatencyCHOP::GetTrackingData(float Deltatime) {
-	if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
-		//Get raw tracker state
-		//auto state = trackingCotask.getState(Antilatency::Alt::Tracking::Constants::DefaultAngularVelocityAvgTime);
-		//std::cout << "Raw position x: " << state.pose.position.x << ", y: " << state.pose.position.y << ", z: " << state.pose.position.z << std::endl;
-
-		//Get extrapolated tracker state with placement correction
-
-		auto extrapolatedState = trackingCotask.getExtrapolatedState(placement, Deltatime);
-
-		Pos = extrapolatedState.pose.position;
-		Rotate = extrapolatedState.pose.rotation;
-	}
-	else {
-		trackingCotask = {};
-	}
-	Yield();
-}
-
-/*/Get data from devices
-Antilatency::Alt::Tracking::State
-AntilatencyCHOP::GetTrackingDatas(Antilatency::Alt::Tracking::ITrackingCotask *cotask) {
-	if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
-		//Get raw tracker state
-		//auto state = trackingCotask.getState(Antilatency::Alt::Tracking::Constants::DefaultAngularVelocityAvgTime);
-		//std::cout << "Raw position x: " << state.pose.position.x << ", y: " << state.pose.position.y << ", z: " << state.pose.position.z << std::endl;
-
-		//Get extrapolated tracker state with placement correction
-		auto extrapolatedState = trackingCotask.getExtrapolatedState(placement, 0.06f);
-
-		//Pos = extrapolatedState.pose.position;
-		//Rotate = extrapolatedState.pose.rotation;
-		return extrapolatedState;
-	}
-	else {
-		cotask = {};
-	}
-	Yield();
-}
-/*/
-
-
-AntilatencyCHOP::AntilatencyCHOP(const OP_NodeInfo* info) : myNodeInfo(info), myError(nullptr)
+AntilatencyCHOP::AntilatencyCHOP(const OP_NodeInfo* info) : myNodeInfo(info)
 {
 	myExecuteCount = 0;
 	myOffset = 0.0;
-	myError = nullptr;
-
-
-	//ADNversion = nullptr;
-
 }
 
 AntilatencyCHOP::~AntilatencyCHOP()
@@ -384,8 +95,7 @@ AntilatencyCHOP::getGeneralInfo(CHOP_GeneralInfo* ginfo, const OP_Inputs* inputs
 	// getOutputInfo() returns true, and likely also set the info->numSamples to how many
 	// samples you want to generate for this CHOP. Otherwise it'll take on length of the
 	// input CHOP, which may be timesliced.
-	bool Timeslice = inputs->getParDouble("Timeslice");
-	ginfo->timeslice = Timeslice;
+	ginfo->timeslice = true;
 
 	ginfo->inputMatchIndex = 0;
 }
@@ -395,58 +105,29 @@ AntilatencyCHOP::getOutputInfo(CHOP_OutputInfo* info, const OP_Inputs* inputs, v
 {
 	// If there is an input connected, we are going to match it's channel names etc
 	// otherwise we'll specify our own.
-
-	/*
 	if (inputs->getNumInputs() > 0)
 	{
 		return false;
 	}
 	else
 	{
-		
-	*/
-		info->numChannels = 7;
+		info->numChannels = 1;
+
 		// Since we are outputting a timeslice, the system will dictate
 		// the numSamples and startIndex of the CHOP data
-		info->numSamples = 1;
-		//info->startIndex = 0;
+		//info->numSamples = 1;
+		//info->startIndex = 0
 
 		// For illustration we are going to output 120hz data
-		double Frequency = inputs->getParDouble("Frequency");
-		info->sampleRate = Frequency;
+		info->sampleRate = 120;
 		return true;
-	//}
+	}
 }
 
 void
 AntilatencyCHOP::getChannelName(int32_t index, OP_String *name, const OP_Inputs* inputs, void* reserved1)
 {
-	//Change way to input Envcode
-	//ENVcode = inputs->getParString("Envcode");
-	//std::cout << ENVcode << std::endl;
-	switch (index) {
-	case 0:
-		name->setString("tx");
-		break;
-	case 1:
-		name->setString("ty");
-		break;
-	case 2:
-		name->setString("tz");
-		break;
-	case 3:
-		name->setString("qx");
-		break;
-	case 4:
-		name->setString("qy");
-		break;
-	case 5:
-		name->setString("qz");
-		break;
-	case 6:
-		name->setString("qw");
-		break;
-	}
+	name->setString("chan1");
 }
 
 void
@@ -455,94 +136,92 @@ AntilatencyCHOP::execute(CHOP_Output* output,
 							  void* reserved)
 {
 	myExecuteCount++;
-	//uint32_t updateId = 0;
+	
+	double	 scale = inputs->getParDouble("Scale");
 
-	ENVcode = inputs->getParString("Envcode");
+	// In this case we'll just take the first input and re-output it scaled.
 
-	//if (deviceNetwork == nullptr)
-	if (!ANTIsetup)
+	if (inputs->getNumInputs() > 0)
 	{
-		try {
-			setupDevice();
-			ENVcode = inputs->getParString("Envcode");
-			updateEnv();
-			//std::cout << "setupDevice()" << std::endl;
-		}
-		catch (const std::exception &ex)
-		{
-			auto error = ex.what();
-			
-			if (strstr(error, "Property")) {
-				myError = "Device Property  doesn't exist. May need to upgrade the firmware.";
-			}
-			else {
-				myError = ex.what();
-			}
-			//myError = "Can't setupDevice!!";
-		}
-	}
-	
-	/*
-	for (auto node : ActNodes) {
+		// We know the first CHOP has the same number of channels
+		// because we returned false from getOutputInfo. 
 
-		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
-			GetTrackingData();
-		}
-		else
-		{
-			if (deviceNetwork != nullptr) {
-				updateDevice();
+		inputs->enablePar("Speed", 0);	// not used
+		inputs->enablePar("Reset", 0);	// not used
+		inputs->enablePar("Shape", 0);	// not used
 
-			}
-			else
+		int ind = 0;
+		const OP_CHOPInput	*cinput = inputs->getInputCHOP(0);
+
+		for (int i = 0 ; i < output->numChannels; i++)
+		{
+			for (int j = 0; j < output->numSamples; j++)
 			{
-				myError = "Can't get deviceNetwork! It may be that another thread has already used it.";
+				output->channels[i][j] = float(cinput->getChannelData(i)[ind] * scale);
+				ind++;
+
+				// Make sure we don't read past the end of the CHOP input
+				ind = ind % cinput->numSamples;
 			}
-
 		}
-
 
 	}
-	*/
+	else // If not input is connected, lets output a sine wave instead
+	{
+		inputs->enablePar("Speed", 1);
+		inputs->enablePar("Reset", 1);
 
-	double Deltatime = inputs->getParDouble("Deltatime");
-	
+		double speed = inputs->getParDouble("Speed");
+		double step = speed * 0.01f;
 
 
-	//*single device
-		if (trackingCotask != nullptr && !trackingCotask.isTaskFinished()) {
-			GetTrackingData(Deltatime);
-		}
-		else
+		// menu items can be evaluated as either an integer menu position, or a string
+		int shape = inputs->getParInt("Shape");
+//		const char *shape_str = inputs->getParString("Shape");
+
+		// keep each channel at a different phase
+		double phase = 2.0f * 3.14159f / (float)(output->numChannels);
+
+		// Notice that startIndex and the output->numSamples is used to output a smooth
+		// wave by ensuring that we are outputting a value for each sample
+		// Since we are outputting at 120, for each frame that has passed we'll be
+		// outputing 2 samples (assuming the timeline is running at 60hz).
+
+
+		for (int i = 0; i < output->numChannels; i++)
 		{
-			if(deviceNetwork != nullptr) {
-				updateDevice();
+			double offset = myOffset + phase*i;
 
-			}
-			else
+
+			double v = 0.0f;
+
+			switch(shape)
 			{
-				myError = "Can't get deviceNetwork! It may be that another thread has already used it.";
+				case 0:		// sine
+					v = sin(offset);
+					break;
+
+				case 1:		// square
+					v = fabs(fmod(offset, 1.0)) > 0.5;
+					break;
+
+				case 2:		// ramp	
+					v = fabs(fmod(offset, 1.0));
+					break;
 			}
-			
+
+
+			v *= scale;
+
+			for (int j = 0; j < output->numSamples; j++)
+			{
+				output->channels[i][j] = float(v);
+				offset += step;
+			}
 		}
 
-
-
-		for (int j = 0; j < output->numSamples; j++)
-		{
-			
-			output->channels[0][j] = Pos.x;
-			output->channels[1][j] = Pos.y;
-			output->channels[2][j] = Pos.z;
-			output->channels[3][j] = Rotate.x;
-			output->channels[4][j] = Rotate.y;
-			output->channels[5][j] = Rotate.z;
-			output->channels[6][j] = Rotate.w;
-		}
-
-	//*/
-	double rate = inputs->getParDouble("Frequency", 0);	
-
+		myOffset += step * output->numSamples; 
+	}
 }
 
 int32_t
@@ -577,8 +256,8 @@ AntilatencyCHOP::getInfoCHOPChan(int32_t index,
 bool		
 AntilatencyCHOP::getInfoDATSize(OP_InfoDATSize* infoSize, void* reserved1)
 {
-	infoSize->rows = 3;
-	infoSize->cols = MarkersSize+1;
+	infoSize->rows = 2;
+	infoSize->cols = 2;
 	// Setting this to false means we'll be assigning values to the table
 	// one row at a time. True means we'll do it one column at a time.
 	infoSize->byColumn = false;
@@ -593,57 +272,6 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 {
 	char tempBuffer[4096];
 
-	//TBD:dont get here
-	//auto markers = environment.getMarkers();
-	//MarkersSize = markers.size();
-
-	if (index == 0){
-		entries->values[0]->setString("mark:tx");
-
-		for (auto i = 0; i < markers.size(); ++i) {
-			#ifdef _WIN32
-			sprintf_s(tempBuffer, "%f\t", markers[i].x);
-			#else // macOS
-			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", markers[i].x);
-			#endif
-			int j = i + 1;
-			entries->values[j]->setString(tempBuffer);
-		}
-		
-		
-	}
-
-	if (index == 1) {
-		entries->values[0]->setString("mark:ty");
-
-		for (auto i = 0; i < markers.size(); ++i) {
-#ifdef _WIN32
-			sprintf_s(tempBuffer, "%f\t", markers[i].y);
-#else // macOS
-			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", markers[i].y);
-#endif
-			int j = i + 1;
-			entries->values[j]->setString(tempBuffer);
-		}
-	}
-
-	if (index == 2) {
-		entries->values[0]->setString("mark:tz");
-
-		for (auto i = 0; i < markers.size(); ++i) {
-#ifdef _WIN32
-			sprintf_s(tempBuffer, "%f\t", markers[i].z);
-#else // macOS
-			snprintf(tempBuffer, sizeof(tempBuffer), "%f\t", markers[i].z);
-#endif
-			int j = i + 1;
-			entries->values[j]->setString(tempBuffer);
-		}
-
-	}
-
-
-	/*
 	if (index == 0)
 	{
 		// Set the value for the first column
@@ -653,7 +281,7 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 #ifdef _WIN32
 		sprintf_s(tempBuffer, "%d", myExecuteCount);
 #else // macOS
-        snprintf(tempBuffer, sizeof(tempBuffer), "%d", myExecuteCount);
+		snprintf(tempBuffer, sizeof(tempBuffer), "%d", myExecuteCount);
 #endif
 		entries->values[1]->setString(tempBuffer);
 	}
@@ -665,103 +293,67 @@ AntilatencyCHOP::getInfoDATEntries(int32_t index,
 
 		// Set the value for the second column
 #ifdef _WIN32
-        sprintf_s(tempBuffer, "%g", myOffset);
+		sprintf_s(tempBuffer, "%g", myOffset);
 #else // macOS
-        snprintf(tempBuffer, sizeof(tempBuffer), "%g", myOffset);
+		snprintf(tempBuffer, sizeof(tempBuffer), "%g", myOffset);
 #endif
 		entries->values[1]->setString( tempBuffer);
 	}
-	*/
 }
-
-
-
-
-void
-AntilatencyCHOP::getErrorString(OP_String *error, void* reserved1)
-{
-	error->setString(myError);
-}
-
-void
-AntilatencyCHOP::getInfoPopupString(OP_String *popup, void* reserved1)
-{
-	popup->setString(myPopup);
-}
-
-void
-AntilatencyCHOP::getWarningString(OP_String *warning, void *reserved1)
-{
-	warning->setString(myWarning);
-}
-
-
-
-
 
 void
 AntilatencyCHOP::setupParameters(OP_ParameterManager* manager, void *reserved1)
 {
-	// Frequency
+	// speed
 	{
 		OP_NumericParameter	np;
 
-		np.name = "Frequency";
-		np.label = "Frequency";
-		np.defaultValues[0] = 60.0;
-		np.minSliders[0] = 1.0;
-		np.maxSliders[0] = 2000.0;
-
-		OP_ParAppendResult res = manager->appendFloat(np);
-		assert(res == OP_ParAppendResult::Success);
-	}
-
-	// Deltatime
-	{
-		OP_NumericParameter	np;
-
-		np.name = "Deltatime";
-		np.label = "DeltaTime";
-		np.defaultValues[0] = 0.06;
-		np.minSliders[0] = -1;
-		np.maxSliders[0] = 1;
-
-		OP_ParAppendResult res = manager->appendFloat(np);
-		assert(res == OP_ParAppendResult::Success);
-	}
-
-	//Time Slice
-	{
-		OP_NumericParameter	tp;
-
-		tp.name = "Timeslice";
-		tp.label = "Time Slice";
-		tp.defaultValues[0] =false;
-
-		OP_ParAppendResult res = manager->appendToggle(tp);
-		assert(res == OP_ParAppendResult::Success);
+		np.name = "Speed";
+		np.label = "Speed";
+		np.defaultValues[0] = 1.0;
+		np.minSliders[0] = -10.0;
+		np.maxSliders[0] =  10.0;
 		
+		OP_ParAppendResult res = manager->appendFloat(np);
+		assert(res == OP_ParAppendResult::Success);
 	}
-	
-	// Environment Code
+
+	// scale
+	{
+		OP_NumericParameter	np;
+
+		np.name = "Scale";
+		np.label = "Scale";
+		np.defaultValues[0] = 1.0;
+		np.minSliders[0] = -10.0;
+		np.maxSliders[0] =  10.0;
+		
+		OP_ParAppendResult res = manager->appendFloat(np);
+		assert(res == OP_ParAppendResult::Success);
+	}
+
+	// shape
 	{
 		OP_StringParameter	sp;
 
-		sp.name = "Envcode";
-		sp.label = "Environment Code";
-		sp.defaultValue = nullptr;
+		sp.name = "Shape";
+		sp.label = "Shape";
 
-		OP_ParAppendResult res = manager->appendString(sp);
+		sp.defaultValue = "Sine";
+
+		const char *names[] = { "Sine", "Square", "Ramp" };
+		const char *labels[] = { "Sine", "Square", "Ramp" };
+
+		OP_ParAppendResult res = manager->appendMenu(sp, 3, names, labels);
 		assert(res == OP_ParAppendResult::Success);
 	}
 
-
-		// pulse
+	// pulse
 	{
 		OP_NumericParameter	np;
 
-		np.name = "Initialize";
-		np.label = "Initialize";
+		np.name = "Reset";
+		np.label = "Reset";
 		
 		OP_ParAppendResult res = manager->appendPulse(np);
 		assert(res == OP_ParAppendResult::Success);
@@ -772,14 +364,9 @@ AntilatencyCHOP::setupParameters(OP_ParameterManager* manager, void *reserved1)
 void 
 AntilatencyCHOP::pulsePressed(const char* name, void* reserved1)
 {
-	if (!strcmp(name, "Initialize"))
+	if (!strcmp(name, "Reset"))
 	{
-		myExecuteCount = 0;
-		trackingCotask = {};
-		updateEnv();
-		RunTrackingTask();
+		myOffset = 0.0;
 	}
 }
-
-
 
